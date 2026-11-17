@@ -2057,6 +2057,38 @@ void main() {
     return () => offs.forEach((f) => f());
   });
 
+  /* E-posta bağlantıları: telefonda varsayılan posta uygulaması yoksa mailto: hiçbir şey yapmaz. Tıklanınca adres
+     panoya kopyalanır ve kısa bir bildirim gösterilir; mailto: yine de denenir. */
+  YULA.module("mailcopy", (root) => {
+    const links = YULA.$$('a[href^="mailto:"]', root);
+    if (!links.length) return;
+    const offs = [];
+    const tr = (document.documentElement.lang || "tr").startsWith("tr");
+    let toast = null, timer = 0;
+    const show = (addr) => {
+      if (!toast) {
+        toast = document.createElement("div");
+        toast.className = "toast";
+        toast.setAttribute("role", "status");
+        document.body.appendChild(toast);
+      }
+      toast.textContent = tr ? `E-posta adresi kopyalandı: ${addr}. Posta uygulaması açılmazsa yapıştırabilirsiniz.` : `Email address copied: ${addr}. Paste it if your mail app does not open.`;
+      toast.classList.add("is-on");
+      clearTimeout(timer);
+      timer = setTimeout(() => toast.classList.remove("is-on"), 5000);
+    };
+    links.forEach((a) => {
+      const addr = a.getAttribute("href").replace(/^mailto:/i, "").split("?")[0];
+      const on = () => {
+        if (navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText(addr).then(() => show(addr), () => show(addr));
+        else show(addr);
+      };
+      a.addEventListener("click", on);
+      offs.push(() => a.removeEventListener("click", on));
+    });
+    return () => { clearTimeout(timer); offs.forEach((f) => f()); if (toast) { toast.parentNode.removeChild(toast); toast = null; } };
+  });
+
   YULA.module("pplan", (root) => {
     const sec = YULA.$("[data-pplan]", root);
     if (!sec) return;

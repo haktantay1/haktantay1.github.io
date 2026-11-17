@@ -1165,6 +1165,9 @@ html:not(.js) .pplan__view { opacity: 1; visibility: visible; grid-area: auto; }
 .phero__tag { margin-top: var(--s-4); color: var(--c-on-dark-soft); }
 @media (min-width: 64rem) { .drawx__fig--villa-plan { grid-column: 1 / span 6; } }
 
+.toast { position: fixed; left: 50%; bottom: clamp(1rem, 4vh, 2.5rem); z-index: 90; max-width: min(92vw, 34rem); padding: 0.9rem 1.2rem; background: var(--c-night); color: var(--c-on-dark); font: 400 0.9rem / 1.5 var(--f-sans); text-align: center; border-radius: 0.2rem; box-shadow: 0 0.5rem 2rem rgba(0, 0, 0, 0.25); opacity: 0; transform: translate(-50%, 0.75rem); pointer-events: none; transition: opacity 0.35s ease, transform 0.35s ease; }
+.toast.is-on { opacity: 1; transform: translate(-50%, 0); }
+
 /* ==========================================================================
    Faz 3: Süreç sayfası, Günce (liste + yazı), Basın, adım adım proje başvurusu.
    ========================================================================== */
