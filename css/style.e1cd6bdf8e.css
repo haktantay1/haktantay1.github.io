@@ -684,10 +684,17 @@ html.js .walk[data-cut-in]:not(.is-static) { margin-top: -100svh; }
 .walk.is-static .walk__caption:last-child { opacity: 1; transform: none; }
 .walk__static { width: 100%; height: 80svh; object-fit: cover; }
 
-/* --- Ana sayfa: proje vitrini (düzenli, eşit ızgara) ------------------------- */
-.showcase { display: grid; gap: clamp(3rem, 2rem + 3vw, 5rem) var(--gutter); grid-template-columns: minmax(0, 1fr); }
-@media (min-width: 40rem) { .showcase { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
-@media (min-width: 64rem) { .showcase { grid-template-columns: repeat(3, minmax(0, 1fr)); align-items: start; } }
+/* --- Ana sayfa: proje vitrini (eşit boyutlu kartlar, yatay kaydırmalı ray) --------- */
+.rail { position: relative; }
+.showcase { display: grid; grid-auto-flow: column; grid-auto-columns: 86%; gap: var(--gutter); overflow-x: auto; scroll-snap-type: x mandatory; scrollbar-width: none; overscroll-behavior-x: contain; padding-bottom: 0.25rem; }
+.showcase::-webkit-scrollbar { display: none; }
+.showcase > * { scroll-snap-align: start; min-width: 0; }
+@media (min-width: 40rem) { .showcase { grid-auto-columns: calc((100% - var(--gutter)) / 2); } }
+@media (min-width: 64rem) { .showcase { grid-auto-columns: calc((100% - 2 * var(--gutter)) / 3); align-items: start; } }
+.rail__nav { display: flex; justify-content: flex-end; gap: var(--s-4); margin-top: var(--s-6); }
+.rail__btn { width: 3.2rem; height: 3.2rem; border: 1px solid currentColor; border-radius: 50%; background: none; color: var(--c-ink); font-size: 1.1rem; line-height: 1; cursor: pointer; transition: opacity 0.3s ease, background-color 0.3s ease, color 0.3s ease; }
+.rail__btn:hover:not(:disabled), .rail__btn:focus-visible { background: var(--c-ink); color: var(--c-cream); }
+.rail__btn:disabled { opacity: 0.3; cursor: default; }
 .card__link { display: block; }
 .card__meta { display: flex; align-items: baseline; gap: var(--s-4); margin-top: var(--s-5); }
 .card__title { font-size: var(--fs-h3); font-style: italic; }
@@ -1152,6 +1159,11 @@ html:not(.js) .pplan__view { opacity: 1; visibility: visible; grid-area: auto; }
 .lampglow.is-on { opacity: 1; animation: lampglow 3.6s ease-in-out infinite; }
 @keyframes lampglow { 0%, 100% { opacity: 0.25; transform: scale(0.8); } 45% { opacity: 1; transform: scale(1.15); } 70% { opacity: 0.6; transform: scale(0.95); } }
 @media (prefers-reduced-motion: reduce) { .lampglow.is-on { animation: none; opacity: 0.55; } }
+
+.pintro__text--more { margin-top: var(--s-5); font: 300 var(--fs-body) / 1.7 var(--f-sans); color: var(--c-ink-soft); max-width: 42rem; }
+@media (min-width: 64rem) { .pintro__text--more { grid-column: 6 / span 7; font-size: var(--fs-body); } }
+.phero__tag { margin-top: var(--s-4); color: var(--c-on-dark-soft); }
+@media (min-width: 64rem) { .drawx__fig--villa-plan { grid-column: 1 / span 6; } }
 
 /* ==========================================================================
    Faz 3: Süreç sayfası, Günce (liste + yazı), Basın, adım adım proje başvurusu.

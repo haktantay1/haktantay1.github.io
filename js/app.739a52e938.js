@@ -2027,6 +2027,36 @@ void main() {
     return () => offs.forEach((f) => f());
   });
 
+  /* Vitrin rayı [data-rail]: kartlar yatay kaydırılır; oklar bir kart boyu kaydırır, uçlarda pasifleşir. */
+  YULA.module("rail", (root) => {
+    const rails = YULA.$$("[data-rail]", root);
+    if (!rails.length) return;
+    const offs = [];
+    rails.forEach((rail) => {
+      const wrap = rail.closest(".rail");
+      const prev = wrap && YULA.$("[data-rail-prev]", wrap);
+      const next = wrap && YULA.$("[data-rail-next]", wrap);
+      if (!prev || !next) return;
+      const step = () => {
+        const c = rail.firstElementChild;
+        return c ? c.getBoundingClientRect().width + parseFloat(getComputedStyle(rail).columnGap || 0) : rail.clientWidth;
+      };
+      const state = () => {
+        prev.disabled = rail.scrollLeft < 4;
+        next.disabled = rail.scrollLeft + rail.clientWidth >= rail.scrollWidth - 4;
+      };
+      const go = (dir) => rail.scrollBy({ left: dir * step(), behavior: YULA.reducedMotion() ? "auto" : "smooth" });
+      const onPrev = () => go(-1), onNext = () => go(1);
+      prev.addEventListener("click", onPrev);
+      next.addEventListener("click", onNext);
+      rail.addEventListener("scroll", state, { passive: true });
+      window.addEventListener("resize", state);
+      state();
+      offs.push(() => { prev.removeEventListener("click", onPrev); next.removeEventListener("click", onNext); rail.removeEventListener("scroll", state); window.removeEventListener("resize", state); });
+    });
+    return () => offs.forEach((f) => f());
+  });
+
   YULA.module("pplan", (root) => {
     const sec = YULA.$("[data-pplan]", root);
     if (!sec) return;
