@@ -684,15 +684,10 @@ html.js .walk[data-cut-in]:not(.is-static) { margin-top: -100svh; }
 .walk.is-static .walk__caption:last-child { opacity: 1; transform: none; }
 .walk__static { width: 100%; height: 80svh; object-fit: cover; }
 
-/* --- Ana sayfa: proje vitrini (4 kart, asimetrik editoryal düzen) ------------ */
-.showcase { display: grid; gap: clamp(3.5rem, 2rem + 6vw, 9rem) var(--gutter); }
-@media (min-width: 64rem) {
-  .showcase { grid-template-columns: repeat(12, minmax(0, 1fr)); align-items: start; }
-  .card--1 { grid-column: 1 / span 7; }
-  .card--2 { grid-column: 9 / span 4; margin-top: clamp(8rem, 4rem + 12vw, 18rem); }
-  .card--3 { grid-column: 2 / span 5; }
-  .card--4 { grid-column: 7 / span 6; margin-top: clamp(6rem, 3rem + 8vw, 12rem); }
-}
+/* --- Ana sayfa: proje vitrini (düzenli, eşit ızgara) ------------------------- */
+.showcase { display: grid; gap: clamp(3rem, 2rem + 3vw, 5rem) var(--gutter); grid-template-columns: minmax(0, 1fr); }
+@media (min-width: 40rem) { .showcase { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+@media (min-width: 64rem) { .showcase { grid-template-columns: repeat(3, minmax(0, 1fr)); align-items: start; } }
 .card__link { display: block; }
 .card__meta { display: flex; align-items: baseline; gap: var(--s-4); margin-top: var(--s-5); }
 .card__title { font-size: var(--fs-h3); font-style: italic; }
@@ -1093,14 +1088,9 @@ html:not(.js) .pplan__view { opacity: 1; visibility: visible; grid-area: auto; }
 
 /* --- Çocuk Odası: yatay render akışı, 360°, çizimler, ürünler --------------------------- */
 .shot--land { aspect-ratio: 4 / 3; }
-.flow__row--wide .shot { grid-column: 1 / -1; }
-.flow__row--lpair .shot { grid-column: 1 / -1; }
-.flow__row--lpair .shot + .shot { margin-top: var(--s-6); }
-@media (min-width: 64rem) {
-  .flow__row--wide .shot { grid-column: 2 / span 10; }
-  .flow__row--lpair .shot:first-child { grid-column: 1 / span 6; }
-  .flow__row--lpair .shot:last-child { grid-column: 7 / span 6; margin-top: clamp(2rem, 1rem + 4vw, 6rem); }
-}
+.flow__grid { display: grid; grid-template-columns: minmax(0, 1fr); gap: clamp(1.5rem, 1rem + 2vw, 3rem) var(--gutter); }
+.flow__grid .shot--land { grid-column: 1 / -1; }
+@media (min-width: 48rem) { .flow__grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
 .flowx__head { max-width: 38rem; margin-bottom: clamp(2rem, 1rem + 4vw, 5rem); }
 .flowx__head .label { display: block; margin-bottom: var(--s-5); color: var(--c-ink-soft); }
 .flowx__lead { margin-top: var(--s-5); color: var(--c-ink-soft); }
@@ -1155,6 +1145,13 @@ html:not(.js) .pplan__view { opacity: 1; visibility: visible; grid-area: auto; }
   .prodx__by:empty { display: block; }
   .prodx__cat { text-align: right; }
 }
+
+.sketchx__note { margin-top: var(--s-3); color: var(--c-ink-soft); text-transform: none; letter-spacing: 0.02em; }
+.lampglow { position: absolute; left: 0; top: 0; width: 5.5rem; height: 5.5rem; margin: -2.75rem 0 0 -2.75rem; border-radius: 50%; pointer-events: none; opacity: 0;
+  background: radial-gradient(circle, rgba(255, 214, 120, 0.95) 0%, rgba(255, 190, 80, 0.55) 30%, rgba(255, 170, 60, 0) 68%); mix-blend-mode: screen; }
+.lampglow.is-on { opacity: 1; animation: lampglow 3.6s ease-in-out infinite; }
+@keyframes lampglow { 0%, 100% { opacity: 0.25; transform: scale(0.8); } 45% { opacity: 1; transform: scale(1.15); } 70% { opacity: 0.6; transform: scale(0.95); } }
+@media (prefers-reduced-motion: reduce) { .lampglow.is-on { animation: none; opacity: 0.55; } }
 
 /* ==========================================================================
    Faz 3: Süreç sayfası, Günce (liste + yazı), Basın, adım adım proje başvurusu.
@@ -1517,7 +1514,4 @@ a:hover > .roll .roll__ch, a:focus-visible > .roll .roll__ch { transform: transl
   .hgal__track { align-items: flex-start; will-change: transform; }
   .hgal__item { width: auto; }
   .hgal__shot { height: min(52svh, 34rem); width: auto; aspect-ratio: 4 / 5; }
-  .hgal__item:nth-child(3n + 2) { margin-top: 5svh; }
-  .hgal__item:nth-child(3n) .hgal__shot { aspect-ratio: 5 / 4; height: min(38svh, 25rem); }
-  .hgal__item:nth-child(3n) { margin-top: 10svh; }
 }

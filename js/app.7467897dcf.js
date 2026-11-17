@@ -1749,14 +1749,11 @@ void main() {
         if (!set) return;
         const day = YULA.$(".lightx__layer--day", set);
         const dusk = YULA.$(".lightx__layer--dusk", set);
-        const night = YULA.$(".lightx__layer--night", set);
         dusk.style.opacity = clamp(v, 0, 1).toFixed(3);
-        night.style.opacity = clamp(v - 1, 0, 1).toFixed(3);
         // tamamen örtülen alt katman çizilmez (daha az birleştirme işi)
         day.style.visibility = v >= 1 ? "hidden" : "";
-        dusk.style.visibility = v >= 2 ? "hidden" : "";
         range.setAttribute("aria-valuetext", names[Math.round(v)] || "");
-        sec.style.setProperty("--light", (v / 2).toFixed(3));
+        sec.style.setProperty("--light", (v * 0.5).toFixed(3));
       };
       on(range, "input", paint);
       // görsel üzerinde yatay sürükleme
@@ -1764,7 +1761,7 @@ void main() {
       on(stage, "pointerdown", (e) => { drag = { x: e.clientX, v: +range.value }; stage.setPointerCapture(e.pointerId); });
       on(stage, "pointermove", (e) => {
         if (!drag) return;
-        range.value = clamp(drag.v + ((e.clientX - drag.x) / stage.clientWidth) * 2.4, 0, 2);
+        range.value = clamp(drag.v + ((e.clientX - drag.x) / stage.clientWidth) * 1.2, 0, 1);
         paint();
       });
       const end = () => { drag = null; };
@@ -1785,7 +1782,7 @@ void main() {
           onEnter: () => {
             const o = { v: +range.value };
             gsap.timeline()
-              .to(o, { v: 1.15, duration: 2.4, ease: "sine.inOut", onUpdate: () => { range.value = o.v; paint(); } })
+              .to(o, { v: 0.7, duration: 2.4, ease: "sine.inOut", onUpdate: () => { range.value = o.v; paint(); } })
               .to(o, { v: 0, duration: 2.0, ease: "sine.inOut", delay: 0.6, onUpdate: () => { range.value = o.v; paint(); } });
           },
         });
@@ -1996,6 +1993,38 @@ void main() {
       dead = true; cancelAnimationFrame(raf); offs.forEach((f) => f());
       if (gl) { const x = gl.getExtension("WEBGL_lose_context"); if (x) x.loseContext(); }
     };
+  });
+
+  /* Lamba ışıması [data-glow]: kapak görselindeki masa lambasının (u, v: görselin kendi koordinatı) üstüne sıcak sarı
+     bir ışık konur; object-fit: cover kırpımı ve kaydırma sırasında görselle birlikte hareket eder. */
+  YULA.module("lampglow", (root) => {
+    const els = YULA.$$("[data-glow]", root);
+    if (!els.length) return;
+    const offs = [];
+    els.forEach((el) => {
+      const box = el.parentElement;
+      const img = YULA.$("img", box);
+      if (!img) return;
+      const [u, v] = el.dataset.glow.split(",").map(Number);
+      let raf = 0, visible = false;
+      const place = () => {
+        const nw = img.naturalWidth, nh = img.naturalHeight;
+        if (!nw || !nh) return;
+        const b = box.getBoundingClientRect(), r = img.getBoundingClientRect();
+        // görüntü kutusu (img) içinde cover: ölçek = max(w/nw, h/nh), ortalı
+        const s = Math.max(r.width / nw, r.height / nh);
+        const x = r.left - b.left + r.width / 2 + (u - 0.5) * nw * s;
+        const y = r.top - b.top + r.height / 2 + (v - 0.5) * nh * s;
+        el.style.left = x.toFixed(1) + "px";
+        el.style.top = y.toFixed(1) + "px";
+        el.classList.add("is-on");
+      };
+      const loop = () => { raf = 0; if (!visible) return; place(); raf = requestAnimationFrame(loop); };
+      const io = new IntersectionObserver((es) => { visible = es[0].isIntersecting; if (visible && !raf) raf = requestAnimationFrame(loop); }, { threshold: 0.05 });
+      io.observe(box);
+      offs.push(() => { io.disconnect(); cancelAnimationFrame(raf); });
+    });
+    return () => offs.forEach((f) => f());
   });
 
   YULA.module("pplan", (root) => {
