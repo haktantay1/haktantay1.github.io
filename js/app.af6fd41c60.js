@@ -2265,6 +2265,8 @@ void main() {
     };
     const close = () => { if (dlg.open) dlg.close(); };
     const go = (it) => {
+      // yalnızca site içi yollar (dizin bozulsa bile javascript: / dış adres açılmaz)
+      if (typeof it.u !== "string" || !/^\/(?!\/)/.test(it.u)) return;
       close();
       const a = document.createElement("a");
       a.href = it.u;
